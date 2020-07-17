@@ -2,7 +2,6 @@ package pw.biome.biomechatrelay;
 
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
-import pw.biome.biomechatrelay.discord.DiscordManager;
 import pw.biome.biomechatrelay.discord.DiscordThread;
 import pw.biome.biomechatrelay.minecraft.MinecraftEventListener;
 
@@ -15,6 +14,7 @@ public final class BiomeChatRelay extends JavaPlugin {
 
     private static Logger LOGGER;
 
+    @Getter
     private DiscordThread discordThread;
 
     @Override
@@ -41,9 +41,5 @@ public final class BiomeChatRelay extends JavaPlugin {
         discordThread.start();
 
         info("Running DiscordThread now!");
-    }
-
-    public DiscordManager getDiscordManager() {
-        return discordThread.getDiscordManager();
     }
 }

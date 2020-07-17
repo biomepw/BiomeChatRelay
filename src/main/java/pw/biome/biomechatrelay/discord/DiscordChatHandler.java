@@ -7,7 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechatrelay.BiomeChatRelay;
-import pw.biome.biomechatrelay.common.ChatUtility;
+import pw.biome.biomechatrelay.util.ChatUtility;
 
 public final class DiscordChatHandler {
 
@@ -17,7 +17,7 @@ public final class DiscordChatHandler {
      * @param messageCreateEvent - Discord4j MessageCreateEvent
      */
     public static void handleChatEvent(MessageCreateEvent messageCreateEvent) {
-        Snowflake serverChatSnowflake = BiomeChatRelay.getInstance().getDiscordManager().getServerChatSnowflake();
+        Snowflake serverChatSnowflake = BiomeChatRelay.getInstance().getDiscordThread().getServerChatSnowflake();
         messageCreateEvent.getMessage().getChannel().subscribe(messageChannel -> {
             if (messageChannel.getId().equals(serverChatSnowflake)) {
                 String message = messageCreateEvent.getMessage().getContent();

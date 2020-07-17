@@ -7,7 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import pw.biome.biomechatrelay.common.ChatUtility;
+import pw.biome.biomechatrelay.util.ChatUtility;
 
 public class MinecraftEventListener implements Listener {
 

@@ -1,23 +1,31 @@
 package pw.biome.biomechatrelay.discord;
 
+import discord4j.common.util.Snowflake;
+import discord4j.core.DiscordClient;
+import discord4j.core.event.domain.lifecycle.DisconnectEvent;
+import discord4j.core.event.domain.message.MessageCreateEvent;
 import lombok.Getter;
+import pw.biome.biomechatrelay.BiomeChatRelay;
 
 public class DiscordThread extends Thread {
 
     @Getter
-    private DiscordManager discordManager;
+    private final DiscordClient client;
 
-    private final String token;
-    private final String serverChatId;
+    @Getter
+    private final Snowflake serverChatSnowflake;
 
     public DiscordThread(String token, String serverChatId) {
-        this.token = token;
-        this.serverChatId = serverChatId;
+        this.serverChatSnowflake = Snowflake.of(serverChatId);
+        client = DiscordClient.create(token);
     }
 
     @Override
     public void run() {
-        discordManager = new DiscordManager(token, serverChatId);
-        discordManager.login();
+        client.login().subscribe(gateway -> {
+            gateway.on(MessageCreateEvent.class).subscribe(DiscordChatHandler::handleChatEvent);
+            gateway.on(DisconnectEvent.class).subscribe(event ->
+                    BiomeChatRelay.info("DiscordManager: Disconnected due to " + event.getCause()));
+        });
     }
 }

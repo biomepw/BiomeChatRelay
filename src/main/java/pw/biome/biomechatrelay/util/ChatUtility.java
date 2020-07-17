@@ -1,22 +1,22 @@
-package pw.biome.biomechatrelay.common;
+package pw.biome.biomechatrelay.util;
 
 import discord4j.rest.entity.RestChannel;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import pw.biome.biomechat.obj.Rank;
 import pw.biome.biomechatrelay.BiomeChatRelay;
-import pw.biome.biomechatrelay.discord.DiscordManager;
+import pw.biome.biomechatrelay.discord.DiscordThread;
 
 public final class ChatUtility {
 
     private static RestChannel serverChatChannel;
 
     public static void sendToDiscord(String message) {
-        DiscordManager discordManager = BiomeChatRelay.getInstance().getDiscordManager();
+        DiscordThread discordThread = BiomeChatRelay.getInstance().getDiscordThread();
 
         // Lazy load server chat channel, and then cache
         if (serverChatChannel == null) {
-            serverChatChannel = discordManager.getClient().getChannelById(discordManager.getServerChatSnowflake());
+            serverChatChannel = discordThread.getClient().getChannelById(discordThread.getServerChatSnowflake());
         }
 
         serverChatChannel.createMessage(message).subscribe();
