@@ -1,0 +1,12 @@
+# +----------------------------------------------------------------------------------------------+ #
+# |                                                                                              | #
+# |                                    BiomeChatRelay                                            | #
+# |                                                                                              | #
+# |                       https://github.com/Biome/BiomeChatRelay                                | #
+# |                                                                                              | #
+# +----------------------------------------------------------------------------------------------+ #
+# Token for Discord bot
+discord-token: "asdojasbj13kj41ou2371381231i3jkns"
+
+# Server chat discord channel ID
+server-chat-channel-id: 123129483712397123
