@@ -3,6 +3,8 @@ package pw.biome.biomechatrelay.util;
 import discord4j.rest.entity.RestChannel;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.scoreboard.Team;
 import pw.biome.biomechat.obj.Rank;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.discord.DiscordThread;
@@ -41,5 +43,13 @@ public final class ChatUtility {
 
         // default as player colour
         return ChatColor.GREEN;
+    }
+
+    public static boolean isAFK(Player player) {
+        if (player == null) return false;
+        Team team = player.getScoreboard().getTeam("hc_afk");
+        if (team == null) return false;
+
+        return team.hasEntry(player.getName());
     }
 }

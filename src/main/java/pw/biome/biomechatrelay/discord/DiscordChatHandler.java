@@ -9,6 +9,8 @@ import pw.biome.biomechat.BiomeChat;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
+import java.util.Arrays;
+
 public final class DiscordChatHandler {
 
     /**
@@ -24,6 +26,8 @@ public final class DiscordChatHandler {
 
                 if (message.equalsIgnoreCase("list") || message.equalsIgnoreCase("playerlist")) {
                     messageChannel.createMessage(buildList()).subscribe();
+                } else if (message.equalsIgnoreCase("tps")) {
+                    messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + Arrays.toString(Bukkit.getTPS()) + "**");
                 } else {
                     messageCreateEvent.getMember().ifPresent(member -> {
                         String displayName = member.getDisplayName();
@@ -52,13 +56,22 @@ public final class DiscordChatHandler {
      * @return player list in strong format
      */
     private static String buildList() {
-        StringBuilder builder = new StringBuilder("» List: ");
+        StringBuilder builder = new StringBuilder("» **List: ");
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            builder.append(player.getDisplayName());
+            if (ChatUtility.isAFK(player)) {
+                builder.append("*");
+                builder.append(player.getDisplayName());
+                builder.append("*");
+            } else {
+                builder.append(player.getDisplayName());
+            }
             builder.append(", ");
         }
 
-        return builder.substring(0, builder.length() - 2);
+        builder.substring(0, builder.length() - 2);
+        builder.append("**");
+
+        return builder.toString();
     }
 }
