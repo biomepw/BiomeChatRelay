@@ -14,6 +14,7 @@ public class MinecraftEventListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerChat(AsyncPlayerChatEvent event) {
+        if (event.isCancelled()) return;
         Player player = event.getPlayer();
         String formattedMessage = player.getDisplayName() + " » " + event.getMessage();
         ChatUtility.sendToDiscord(formattedMessage);
