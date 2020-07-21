@@ -27,7 +27,7 @@ public final class DiscordChatHandler {
                 if (message.equalsIgnoreCase("list") || message.equalsIgnoreCase("playerlist")) {
                     messageChannel.createMessage(buildList()).subscribe();
                 } else if (message.equalsIgnoreCase("tps")) {
-                    messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + Arrays.toString(Bukkit.getTPS()) + "**");
+                    messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + Arrays.toString(Bukkit.getTPS()) + "**").subscribe();
                 } else {
                     messageCreateEvent.getMember().ifPresent(member -> {
                         String displayName = member.getDisplayName();
