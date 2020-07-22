@@ -1,5 +1,6 @@
 package pw.biome.biomechatrelay.discord;
 
+import com.google.common.collect.ImmutableList;
 import discord4j.common.util.Snowflake;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import net.md_5.bungee.api.ChatColor;
@@ -57,21 +58,19 @@ public final class DiscordChatHandler {
      */
     private static String buildList() {
         StringBuilder builder = new StringBuilder("» **List: ");
-
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (ChatUtility.isAFK(player)) {
-                builder.append("*");
-                builder.append(player.getDisplayName());
-                builder.append("*");
+        ImmutableList<Player> players = ImmutableList.copyOf(Bukkit.getOnlinePlayers());
+        for (int i = 0; i < players.size(); i++) {
+            Player value = players.get(i);
+            if (ChatUtility.isAFK(value)) {
+                builder.append("~~");
+                builder.append(value.getDisplayName());
+                builder.append("~~");
             } else {
-                builder.append(player.getDisplayName());
+                builder.append(value.getDisplayName());
             }
-            builder.append(", ");
+            if (i != players.size() - 1) builder.append(", ");
         }
-
-        builder.substring(0, builder.length() - 2);
         builder.append("**");
-
         return builder.toString();
     }
 }
