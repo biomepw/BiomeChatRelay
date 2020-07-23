@@ -28,7 +28,7 @@ public final class DiscordChatHandler {
                 if (message.equalsIgnoreCase("list") || message.equalsIgnoreCase("playerlist")) {
                     messageChannel.createMessage(buildList()).subscribe();
                 } else if (message.equalsIgnoreCase("tps")) {
-                    messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + Arrays.toString(Bukkit.getTPS()) + "**").subscribe();
+                    messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + buildTpsString() + "**").subscribe();
                 } else {
                     messageCreateEvent.getMember().ifPresent(member -> {
                         String displayName = member.getDisplayName();
@@ -72,5 +72,14 @@ public final class DiscordChatHandler {
         }
         builder.append("**");
         return builder.toString();
+    }
+
+    private static String buildTpsString() {
+        double[] tps = Bukkit.getTPS();
+        int[] arr = new int[tps.length];
+        for (int i = 0; i < tps.length; i++) {
+            arr[i] = (int) tps[i];
+        }
+        return Arrays.toString(arr);
     }
 }
