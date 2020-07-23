@@ -3,6 +3,7 @@ package pw.biome.biomechatrelay;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import pw.biome.biomechatrelay.discord.DiscordThread;
+import pw.biome.biomechatrelay.minecraft.CommandHandler;
 import pw.biome.biomechatrelay.minecraft.MinecraftEventListener;
 
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ public final class BiomeChatRelay extends JavaPlugin {
         LOGGER = getLogger();
         saveDefaultConfig();
 
+        getCommand("biomechatrelay").setExecutor(new CommandHandler());
         getServer().getPluginManager().registerEvents(new MinecraftEventListener(), instance);
 
         initialiseDiscordThread();
@@ -36,8 +38,7 @@ public final class BiomeChatRelay extends JavaPlugin {
         discordThread = new DiscordThread(getConfig().getString("discord-token"),
                 getConfig().getString("server-chat-channel-id"));
 
-        discordThread.setName("BiomeChatRelay - DiscordThread");
-
+        discordThread.setName("BiomeChatRelay - Discord");
         discordThread.start();
 
         info("Running DiscordThread now!");

@@ -3,3 +3,8 @@ version: ${project.version}
 main: pw.biome.biomechatrelay.BiomeChatRelay
 api-version: 1.16
 depend: [BiomeChat]
+commands:
+  biomechatrelay:
+    description: commands
+    usage: /biomechatrelay
+    aliases: [bcr]
