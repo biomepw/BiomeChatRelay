@@ -5,6 +5,7 @@ import discord4j.core.DiscordClient;
 import discord4j.core.event.domain.lifecycle.DisconnectEvent;
 import discord4j.core.event.domain.message.MessageCreateEvent;
 import lombok.Getter;
+import lombok.Setter;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 
 public class DiscordThread extends Thread {
@@ -14,6 +15,10 @@ public class DiscordThread extends Thread {
 
     @Getter
     private final Snowflake serverChatSnowflake;
+
+    @Getter
+    @Setter
+    private boolean debugMode;
 
     public DiscordThread(String token, String serverChatId) {
         this.serverChatSnowflake = Snowflake.of(serverChatId);

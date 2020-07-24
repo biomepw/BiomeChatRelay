@@ -20,9 +20,14 @@ public final class DiscordChatHandler {
      * @param messageCreateEvent - Discord4j MessageCreateEvent
      */
     public static void handleChatEvent(MessageCreateEvent messageCreateEvent) {
-        Snowflake serverChatSnowflake = BiomeChatRelay.getInstance().getDiscordThread().getServerChatSnowflake();
+        DiscordThread discordThread = BiomeChatRelay.getInstance().getDiscordThread();
+        Snowflake serverChatSnowflake = discordThread.getServerChatSnowflake();
+        boolean debug = discordThread.isDebugMode();
+
         messageCreateEvent.getMessage().getChannel().subscribe(messageChannel -> {
+            if (debug) BiomeChatRelay.info("Debug: messagecreate event");
             if (messageChannel.getId().equals(serverChatSnowflake)) {
+                if (debug) BiomeChatRelay.info("Debug: messagechannel equals serverchatsnowflake");
                 String message = messageCreateEvent.getMessage().getContent();
 
                 if (message.equalsIgnoreCase("list") || message.equalsIgnoreCase("playerlist")) {
@@ -30,13 +35,16 @@ public final class DiscordChatHandler {
                 } else if (message.equalsIgnoreCase("tps")) {
                     messageChannel.createMessage("> **TPS: (1m, 5m, 15m) " + buildTpsString() + "**").subscribe();
                 } else {
+                    if (debug) BiomeChatRelay.info("Debug: else on message check");
                     messageCreateEvent.getMember().ifPresent(member -> {
+                        if (debug) BiomeChatRelay.info("Debug: member is present");
                         String displayName = member.getDisplayName();
 
                         // Don't display any bot relay
                         if (member.isBot()) return;
 
                         member.getHighestRole().subscribe(role -> {
+                            if (debug) BiomeChatRelay.info("Debug: get highest role!");
                             ChatColor chatColor = ChatUtility.getColourFromRankName(role.getName());
                             String formattedMessage = ChatColor.GOLD + "»" + ChatColor.AQUA +
                                     " Discord: " + chatColor + displayName + ChatColor.WHITE + " » "
@@ -44,6 +52,7 @@ public final class DiscordChatHandler {
 
                             // Pass to minecraft
                             ChatUtility.sendToMinecraft(formattedMessage);
+                            if (debug) BiomeChatRelay.info("Debug: posted to mc");
                         });
                     });
                 }

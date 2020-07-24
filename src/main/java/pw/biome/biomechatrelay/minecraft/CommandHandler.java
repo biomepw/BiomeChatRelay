@@ -24,6 +24,9 @@ public class CommandHandler implements CommandExecutor {
                         discordThread.start();
                         sender.sendMessage(ChatColor.GREEN + "Starting DiscordThread...");
                     }
+                } else if (args[0].equalsIgnoreCase("debug")) {
+                    discordThread.setDebugMode(!discordThread.isDebugMode());
+                    sender.sendMessage(ChatColor.GREEN + "Debug mode: " + discordThread.isDebugMode());
                 }
             }
         }

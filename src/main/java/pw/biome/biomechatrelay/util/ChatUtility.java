@@ -28,7 +28,7 @@ public final class ChatUtility {
     }
 
     public static void sendToMinecraft(String message) {
-        Bukkit.broadcastMessage(message);
+        Bukkit.getOnlinePlayers().forEach(player -> player.sendMessage(message));
 
         // Log all messages to console
         BiomeChatRelay.info(message);
