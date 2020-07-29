@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import pw.biome.biomechatrelay.discord.DiscordThread;
 import pw.biome.biomechatrelay.minecraft.CommandHandler;
 import pw.biome.biomechatrelay.minecraft.MinecraftEventListener;
+import pw.biome.biomechatrelay.util.ChatUtility;
 
 import java.util.logging.Logger;
 
@@ -28,6 +29,12 @@ public final class BiomeChatRelay extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MinecraftEventListener(), instance);
 
         initialiseDiscordThread();
+    }
+
+    @Override
+    public void onDisable() {
+        String stopMessage = "> :exclamation: Server has stopped :exclamation: ";
+        ChatUtility.sendToDiscord(stopMessage);
     }
 
     public static void info(String msg) {

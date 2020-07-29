@@ -8,6 +8,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.ServerLoadEvent;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
 public class MinecraftEventListener implements Listener {
@@ -42,5 +43,11 @@ public class MinecraftEventListener implements Listener {
         String deathMessage = event.getDeathMessage().replaceAll(player.getName(), player.getDisplayName());
         String formattedDeathMessage = "> **» " + deathMessage + "**";
         ChatUtility.sendToDiscord(formattedDeathMessage);
+    }
+
+    @EventHandler
+    public void serverLoad(ServerLoadEvent event) {
+        String startMessage = "> :white_check_mark:  Server has started :white_check_mark:";
+        ChatUtility.sendToDiscord(startMessage);
     }
 }
