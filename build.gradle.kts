@@ -24,8 +24,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.discord4j:discord4j-core:3.1.0.RC4")
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.1-R0.1-SNAPSHOT")
+    implementation("com.discord4j:discord4j-core:3.1.0")
+    compileOnly("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
     compileOnly("pw.biome:BiomeChat:3.1.0")
     compileOnly("org.projectlombok:lombok:1.18.12")
     annotationProcessor("org.projectlombok:lombok:1.18.12")
