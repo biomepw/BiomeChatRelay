@@ -29,10 +29,12 @@ dependencies {
     compileOnly("pw.biome:BiomeChat:3.1.0")
     compileOnly("org.projectlombok:lombok:1.18.12")
     annotationProcessor("org.projectlombok:lombok:1.18.12")
+    implementation("io.netty:netty-all:4.1.51.Final")
 }
 
 tasks {
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+        relocate("io.netty", "pw.biome.netty")
         archiveFileName.set("BiomeChatRelay-" + project.version + ".jar")
     }
 
