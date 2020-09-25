@@ -9,6 +9,9 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
+import pw.biome.biomechat.obj.PlayerCache;
+import pw.biome.biomechatrelay.BiomeChatRelay;
+import pw.biome.biomechatrelay.discord.DiscordGroupSyncHandler;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
 public class MinecraftEventListener implements Listener {
@@ -27,6 +30,9 @@ public class MinecraftEventListener implements Listener {
         String displayName = player.getDisplayName();
         String formattedLeaveMessage = "> **» " + displayName + " has joined**";
         ChatUtility.sendToDiscord(formattedLeaveMessage);
+
+        // Handle user's group changes
+        BiomeChatRelay.getInstance().getDiscordThread().getDiscordGroupSyncHandler().handleUser(PlayerCache.getFromUUID(player.getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

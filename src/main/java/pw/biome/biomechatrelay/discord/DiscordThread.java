@@ -20,9 +20,13 @@ public class DiscordThread extends Thread {
     @Setter
     private boolean debugMode;
 
+    @Getter
+    private final DiscordGroupSyncHandler discordGroupSyncHandler;
+
     public DiscordThread(String token, String serverChatId) {
         this.serverChatSnowflake = Snowflake.of(serverChatId);
         client = DiscordClient.create(token);
+        discordGroupSyncHandler = new DiscordGroupSyncHandler(client);
     }
 
     @Override
