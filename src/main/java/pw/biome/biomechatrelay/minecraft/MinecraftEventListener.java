@@ -11,7 +11,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import pw.biome.biomechat.obj.PlayerCache;
 import pw.biome.biomechatrelay.BiomeChatRelay;
-import pw.biome.biomechatrelay.discord.DiscordGroupSyncHandler;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
 public class MinecraftEventListener implements Listener {
