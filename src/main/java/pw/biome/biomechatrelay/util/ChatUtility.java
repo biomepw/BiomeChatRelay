@@ -5,7 +5,7 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Team;
-import pw.biome.biomechat.obj.Rank;
+import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.discord.DiscordThread;
 
@@ -34,14 +34,9 @@ public final class ChatUtility {
         BiomeChatRelay.info(message);
     }
 
-    public static ChatColor getColourFromRankName(String rankName) {
-        Rank rank = Rank.getRankFromName(rankName);
-
-        if (rank != null) {
-            return rank.getPrefix();
-        }
-
-        // default as player colour
+    public static ChatColor getColourFromCorpName(String corpName) {
+        String sanitised = corpName.toLowerCase().replaceAll(" ", "_");
+        Corp.getCorpFromName(sanitised).ifPresent(Corp::getPrefix);
         return ChatColor.GREEN;
     }
 

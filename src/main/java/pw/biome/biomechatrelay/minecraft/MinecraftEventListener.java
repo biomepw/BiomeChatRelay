@@ -9,7 +9,7 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
-import pw.biome.biomechat.obj.PlayerCache;
+import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
@@ -31,7 +31,7 @@ public class MinecraftEventListener implements Listener {
         ChatUtility.sendToDiscord(formattedLeaveMessage);
 
         // Handle user's group changes
-        BiomeChatRelay.getInstance().getDiscordThread().getDiscordGroupSyncHandler().handleUser(PlayerCache.getFromUUID(player.getUniqueId()));
+        BiomeChatRelay.getInstance().getDiscordThread().getDiscordGroupSyncHandler().handleUser(Corp.getCorpForUser(player.getUniqueId()));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

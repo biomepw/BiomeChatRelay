@@ -7,7 +7,7 @@ import discord4j.discordjson.json.RoleData;
 import discord4j.rest.entity.RestGuild;
 import discord4j.rest.util.Color;
 import discord4j.rest.util.PermissionSet;
-import pw.biome.biomechat.obj.PlayerCache;
+import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechatrelay.util.StringFormatUtility;
 import reactor.core.publisher.Mono;
 
@@ -34,19 +34,18 @@ public class DiscordGroupSyncHandler {
     /**
      * Method to handle the updating of a users discord roles based on their in game rank
      *
-     * @param playerCache of the player being adjusted
+     * @param corp of the player being adjusted
      */
-    public void handleUser(PlayerCache playerCache) {
-        guild.getMembers().filter(memberData -> memberData.nick().get().isPresent()
-                && memberData.nick().get().get().equalsIgnoreCase(playerCache.getDisplayName()))
+    public void handleUser(Corp corp) {
+        guild.getMembers().filter(memberData -> memberData.nick().get().isPresent())
                 .collectList().subscribe(matched -> matched.forEach(matchedMember -> {
-            if (!matchedMember.roles().contains(playerCache.getRank().getName())) {
+            if (!matchedMember.roles().contains(corp.getName())) {
                 Snowflake userId = Snowflake.of(matchedMember.user().id());
                 AtomicBoolean roleExists = new AtomicBoolean(false);
 
                 // Try search through the current roles and add the user to it
                 guild.getRoles().filter(roleData ->
-                        roleData.name().equalsIgnoreCase(playerCache.getRank().getName()))
+                        roleData.name().equalsIgnoreCase(corp.getName()))
                         .subscribe(roleData -> {
                             roleExists.set(true);
                             Snowflake roleId = Snowflake.of(roleData.id());
@@ -55,9 +54,9 @@ public class DiscordGroupSyncHandler {
 
                 // Otherwise if the role doesn't exist
                 if (!roleExists.get()) {
-                    String rankName = playerCache.getRank().getName();
+                    String rankName = corp.getName();
                     String formattedName = StringFormatUtility.convertFromMCRoleNameToDiscordRoleName(rankName);
-                    Color color = Color.of(playerCache.getRank().getPrefix().getColor().getRGB());
+                    Color color = Color.of(corp.getPrefix().getColor().getRGB());
 
                     // Create role and then assign it to the user
                     createRole(formattedName, color).subscribe(roleData -> {

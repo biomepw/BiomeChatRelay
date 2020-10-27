@@ -22,20 +22,27 @@ repositories {
         name = "husk"
         url = uri("https://maven.husk.pro/repository/maven-public/")
     }
+    maven {
+        name = "Aikar"
+        url = uri("https://repo.aikar.co/content/groups/aikar/")
+    }
 }
 
 dependencies {
     implementation("com.discord4j:discord4j-core:3.1.0")
     compileOnly("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
-    compileOnly("pw.biome:BiomeChat:3.1.0")
+    compileOnly("pw.biome:BiomeChat:3.2.0")
     compileOnly("org.projectlombok:lombok:1.18.12")
     annotationProcessor("org.projectlombok:lombok:1.18.12")
     implementation("io.netty:netty-all:4.1.51.Final")
+    implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
 }
 
 tasks {
     withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
         relocate("io.netty", "pw.biome.netty")
+        relocate("co.aikar.commands", "pw.biome.biomechat.acf")
+        relocate("co.aikar.locales", "pw.biome.biomechat.locales")
         archiveFileName.set("BiomeChatRelay-" + project.version + ".jar")
     }
 

@@ -1,5 +1,6 @@
 package pw.biome.biomechatrelay;
 
+import co.aikar.commands.PaperCommandManager;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import pw.biome.biomechatrelay.discord.DiscordThread;
@@ -25,7 +26,9 @@ public final class BiomeChatRelay extends JavaPlugin {
         LOGGER = getLogger();
         saveDefaultConfig();
 
-        getCommand("biomechatrelay").setExecutor(new CommandHandler());
+        PaperCommandManager manager = new PaperCommandManager(instance);
+        manager.getCommandContexts().registerIssuerOnlyContext(DiscordThread.class, c -> instance.getDiscordThread());
+        manager.registerCommand(new CommandHandler());
         getServer().getPluginManager().registerEvents(new MinecraftEventListener(), instance);
 
         initialiseDiscordThread();

@@ -1,35 +1,40 @@
 package pw.biome.biomechatrelay.minecraft;
 
+import co.aikar.commands.BaseCommand;
+import co.aikar.commands.annotation.CommandAlias;
+import co.aikar.commands.annotation.CommandPermission;
+import co.aikar.commands.annotation.Description;
+import co.aikar.commands.annotation.Subcommand;
 import org.bukkit.ChatColor;
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.discord.DiscordThread;
 
-public class CommandHandler implements CommandExecutor {
+@CommandAlias("biomechatrelay|bcr")
+@Description("Biome discord server relay commands")
+public class CommandHandler extends BaseCommand {
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        DiscordThread discordThread = BiomeChatRelay.getInstance().getDiscordThread();
-        if (sender.hasPermission("biomechatrelay.admin")) {
-            if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("stop")) {
-                    if (discordThread.isAlive()) {
-                        discordThread.interrupt();
-                        sender.sendMessage(ChatColor.RED + "Stopped DiscordThread...");
-                    }
-                } else if (args[0].equalsIgnoreCase("start")) {
-                    if (!discordThread.isAlive()) {
-                        discordThread.start();
-                        sender.sendMessage(ChatColor.GREEN + "Starting DiscordThread...");
-                    }
-                } else if (args[0].equalsIgnoreCase("debug")) {
-                    discordThread.setDebugMode(!discordThread.isDebugMode());
-                    sender.sendMessage(ChatColor.GREEN + "Debug mode: " + discordThread.isDebugMode());
-                }
-            }
+    @Subcommand("stop")
+    @CommandPermission("biomechatrelay.admin")
+    public void onStop(CommandSender sender, DiscordThread discordThread) {
+        if (discordThread.isAlive()) {
+            discordThread.interrupt();
+            sender.sendMessage(ChatColor.RED + "Stopped DiscordThread...");
         }
-        return true;
+    }
+
+    @Subcommand("start")
+    @CommandPermission("biomechatrelay.admin")
+    public void onStart(CommandSender sender, DiscordThread discordThread) {
+        if (!discordThread.isAlive()) {
+            discordThread.start();
+            sender.sendMessage(ChatColor.GREEN + "Starting DiscordThread...");
+        }
+    }
+
+    @Subcommand("debug")
+    @CommandPermission("biomechatrelay.admin")
+    public void onDebug(CommandSender sender, DiscordThread discordThread) {
+        discordThread.setDebugMode(!discordThread.isDebugMode());
+        sender.sendMessage(ChatColor.GREEN + "Debug mode: " + discordThread.isDebugMode());
     }
 }
