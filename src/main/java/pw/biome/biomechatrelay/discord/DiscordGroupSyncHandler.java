@@ -209,6 +209,8 @@ public class DiscordGroupSyncHandler implements Listener {
 
     @EventHandler
     public void onCorpDelete(CorpDeleteEvent event) {
-        deleteRole(event.getDeletedCorp());
+        Bukkit.getScheduler().runTaskAsynchronously(BiomeChatRelay.getInstance(), () -> {
+            deleteRole(event.getDeletedCorp());
+        });
     }
 }
