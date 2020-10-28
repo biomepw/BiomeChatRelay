@@ -14,9 +14,10 @@ import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class DiscordGroupSyncHandler {
 
@@ -28,6 +29,8 @@ public class DiscordGroupSyncHandler {
     private PermissionSet playerPermissionSet;
 
     private final ExpiringMap<String, MemberData> discordUsernameCache;
+    private final ExpiringMap<String, RoleData> discordRoleCache;
+
 
     /**
      * Constructor
@@ -36,7 +39,8 @@ public class DiscordGroupSyncHandler {
      */
     public DiscordGroupSyncHandler(DiscordClient discordClient) {
         this.discordClient = discordClient;
-        this.discordUsernameCache = ExpiringMap.builder().expiration(10000, TimeUnit.SECONDS).build();
+        this.discordUsernameCache = ExpiringMap.builder().expiration(5, TimeUnit.MINUTES).build();
+        this.discordRoleCache = ExpiringMap.builder().expiration(5, TimeUnit.MINUTES).build();
     }
 
     /**
@@ -53,54 +57,87 @@ public class DiscordGroupSyncHandler {
         if (discordUsernameCache.size() != 0) {
             MemberData memberData = discordUsernameCache.get(name);
             if (memberData == null) {
-                if (debug) BiomeChatRelay.info("Debug: memberdata is null for " + name + " likely just have a mismatch in username!");
+                if (debug)
+                    BiomeChatRelay.info("Debug: memberdata is null for " + name + " likely just have a mismatch in username!");
                 return;
             }
             Snowflake userId = Snowflake.of(memberData.user().id());
 
-            List<String> roles = memberData.roles();
+            HashSet<String> roles = new HashSet<>(memberData.roles());
 
             String sanitised = capitaliseFirst(corp.getName().toLowerCase().replaceAll("_", ""));
 
-            // If their roles contains none of the following, it's time to add it!
-            if (!roles.contains(corp.getName())
-                    && !roles.contains(corp.getName().toLowerCase())
-                    && !roles.contains(sanitised)) {
-                AtomicBoolean roleExists = new AtomicBoolean(false);
+            if (debug) BiomeChatRelay.info("Debug: user roles for " + name + " are: " + memberData.roles());
 
-                // Try search through the current roles and add the user to it
-                loadOrGetGuild().getRoles().filter(roleData ->
-                        roleData.name().equalsIgnoreCase(corp.getName())
-                                || roleData.name().equalsIgnoreCase(sanitised))
-                        .subscribe(roleData -> {
-                            roleExists.set(true);
-                            Snowflake roleId = Snowflake.of(roleData.id());
-                            loadOrGetGuild().addMemberRole(userId, roleId, "DiscordGroupSyncHandler");
-                            if (debug)
-                                BiomeChatRelay.info("Debug: Role exists for " + corp.getName() + " adding user " + name);
-                        });
+            // Try search through the current roles and add the user to it
+            Optional<RoleData> roleDataOptional = roleExists(corp.getName(), sanitised);
+            if (roleDataOptional.isPresent()) {
+                RoleData roleData = roleDataOptional.get();
+                Snowflake roleId = Snowflake.of(roleData.id());
 
-                // Otherwise if the role doesn't exist
-                if (!roleExists.get()) {
-                    if (debug)
-                        BiomeChatRelay.info("Debug: Role doesnt exist for " + corp.getName() + " sanitised: " + sanitised);
-                    Color color = Color.of(corp.getPrefix().getColor().getRGB());
+                // Add the relevant role
+                if (!roles.contains(roleData.id())) {
+                    loadOrGetGuild().addMemberRole(userId, roleId, "DiscordGroupSyncHandler").subscribe();
+                    if (debug) {
+                        BiomeChatRelay.info("Debug: Role exists for " + corp.getName() + " adding user " + name);
+                    }
+                } else if (roles.contains(BIOME_PLAYER_ROLE_ID.asString()) && roles.contains(roleData.id())) {
+                    // Remove all other roles
+                    for (String role : roles) {
+                        if (!role.equals(BIOME_PLAYER_ROLE_ID.asString()) && !role.equals(roleData.id())) {
+                            loadOrGetGuild().removeMemberRole(userId, Snowflake.of(role), "DiscordGroupSyncHandler").subscribe();
 
-                    // Create role and then assign it to the user
-                    createRole(sanitised, color).subscribe(roleData -> {
-                        Snowflake roleId = Snowflake.of(roleData.id());
-                        loadOrGetGuild().addMemberRole(userId, roleId, "DiscordGroupSyncHandler");
-                        if (debug)
-                            BiomeChatRelay.info("Debug:  creating role and assigning user: " + name + " for corp " + corp.getName());
-                    });
+                            if (debug) {
+                                BiomeChatRelay.info("Debug: removing role with ID: " + role + " from user " + name);
+                            }
+                        }
+                    }
                 }
+            } else {
+                if (debug)
+                    BiomeChatRelay.info("Debug: Role doesnt exist for " + corp.getName() + " sanitised: " + sanitised);
+                Color color = Color.of(corp.getPrefix().getColor().getRGB());
+
+                // Create role and then assign it to the user
+                createRole(sanitised, color).subscribe(roleData -> {
+                    Snowflake roleId = Snowflake.of(roleData.id());
+                    loadOrGetGuild().addMemberRole(userId, roleId, "DiscordGroupSyncHandler");
+                    if (debug)
+                        BiomeChatRelay.info("Debug: creating role and assigning user: " + name + " for corp " + corp.getName());
+                });
             }
+
         } else {
             if (debug) BiomeChatRelay.info("Debug: have to reload username cache and try again!");
             // Load username cache and then try again!
             loadUsernameCache();
             Bukkit.getScheduler().runTaskLaterAsynchronously(BiomeChatRelay.getInstance(), () -> handleUser(name, corp), 100);
         }
+    }
+
+    private Optional<RoleData> roleExists(String roleName, String sanitised) {
+        // If there's no data in the map, time to reload the data. This is blocking
+        if (this.discordRoleCache.isEmpty()) {
+            List<RoleData> roles = loadOrGetGuild().getRoles().collectList().block();
+            if (roles != null) {
+                for (RoleData roleData : roles) {
+                    this.discordRoleCache.put(roleData.name().toLowerCase(), roleData);
+                }
+            }
+        }
+        // Only proceed if there's data in the cache!
+
+        String roleNameLower = roleName.toLowerCase();
+        String sanitisedLower = sanitised.toLowerCase();
+
+        // O(1) on each of these
+        if (this.discordRoleCache.containsKey(roleNameLower)) {
+            return Optional.of(this.discordRoleCache.get(roleNameLower));
+        } else if (this.discordRoleCache.containsKey(sanitisedLower)) {
+            return Optional.of(this.discordRoleCache.get(sanitisedLower));
+        }
+
+        return Optional.empty();
     }
 
     private void loadUsernameCache() {
