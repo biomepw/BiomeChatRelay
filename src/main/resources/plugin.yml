@@ -1,5 +1,6 @@
 name: BiomeChatRelay
 version: ${project.version}
+author: husK
 main: pw.biome.biomechatrelay.BiomeChatRelay
 api-version: 1.16
 depend: [ BiomeChat ]

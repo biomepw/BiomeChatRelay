@@ -29,12 +29,11 @@ repositories {
 }
 
 dependencies {
-    implementation("com.discord4j:discord4j-core:3.1.0")
-    compileOnly("com.destroystokyo.paper:paper-api:1.16.2-R0.1-SNAPSHOT")
+    implementation("com.discord4j:discord4j-core:3.1.1")
+    compileOnly("com.destroystokyo.paper:paper-api:1.16.3-R0.1-SNAPSHOT")
     compileOnly("pw.biome:BiomeChat:3.2.0")
-    compileOnly("org.projectlombok:lombok:1.18.12")
-    annotationProcessor("org.projectlombok:lombok:1.18.12")
-    implementation("io.netty:netty-all:4.1.51.Final")
+    compileOnly("org.projectlombok:lombok:1.18.16")
+    annotationProcessor("org.projectlombok:lombok:1.18.16")
     implementation("co.aikar:acf-paper:0.5.0-SNAPSHOT")
 }
 

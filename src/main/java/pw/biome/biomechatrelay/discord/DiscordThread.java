@@ -27,6 +27,7 @@ public class DiscordThread extends Thread {
         this.serverChatSnowflake = Snowflake.of(serverChatId);
         client = DiscordClient.create(token);
         discordGroupSyncHandler = new DiscordGroupSyncHandler(client);
+        discordGroupSyncHandler.loadPermissionSet();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package pw.biome.biomechatrelay.minecraft;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -31,7 +32,9 @@ public class MinecraftEventListener implements Listener {
         ChatUtility.sendToDiscord(formattedLeaveMessage);
 
         // Handle user's group changes
-        BiomeChatRelay.getInstance().getDiscordThread().getDiscordGroupSyncHandler().handleUser(Corp.getCorpForUser(player.getUniqueId()));
+        BiomeChatRelay plugin = BiomeChatRelay.getInstance();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () ->
+                plugin.getDiscordThread().getDiscordGroupSyncHandler().handleUser(player.getDisplayName(), Corp.getCorpForUser(player.getUniqueId())));
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
