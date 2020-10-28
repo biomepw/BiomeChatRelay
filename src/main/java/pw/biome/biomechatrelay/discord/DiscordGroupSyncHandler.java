@@ -10,6 +10,9 @@ import discord4j.rest.entity.RestGuild;
 import discord4j.rest.util.Color;
 import discord4j.rest.util.PermissionSet;
 import org.bukkit.Bukkit;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import pw.biome.biomechat.event.custom.CorpDeleteEvent;
 import pw.biome.biomechat.obj.Corp;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import reactor.core.publisher.Mono;
@@ -19,7 +22,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
-public class DiscordGroupSyncHandler {
+public class DiscordGroupSyncHandler implements Listener {
 
     private static final Snowflake BIOME_GUILD_ID = Snowflake.of("618600961153433611");
     private static final Snowflake BIOME_PLAYER_ROLE_ID = Snowflake.of("619028333308411925");
@@ -180,14 +183,14 @@ public class DiscordGroupSyncHandler {
     /**
      * Deletes a role in the Biome guild
      *
-     * @param name of the role to delete
+     * @param corp to delete the role of
      */
-    public void deleteRole(String name) {
-        loadOrGetGuild().getRoles().collectList().subscribe(listOfRoles -> listOfRoles.forEach(role -> {
-            if (role.name().equalsIgnoreCase(name)) {
-                loadOrGetGuild().deleteRole(Snowflake.of(role.id()), "DiscordGroupSyncHandler").subscribe();
-            }
-        }));
+    public void deleteRole(Corp corp) {
+        String sanitised = capitaliseFirst(corp.getName().toLowerCase().replaceAll("_", ""));
+
+        Optional<RoleData> roleDataOptional = roleExists(corp.getName(), sanitised);
+        roleDataOptional.ifPresent(roleData ->
+                loadOrGetGuild().deleteRole(Snowflake.of(roleData.id()), "DiscordGroupSyncHandler").subscribe());
     }
 
     public RestGuild loadOrGetGuild() {
@@ -202,5 +205,10 @@ public class DiscordGroupSyncHandler {
                 .getRoleById(BIOME_GUILD_ID, BIOME_PLAYER_ROLE_ID)
                 .getData()
                 .subscribe(roleData -> this.playerPermissionSet = PermissionSet.of(roleData.permissions()));
+    }
+
+    @EventHandler
+    public void onCorpDelete(CorpDeleteEvent event) {
+        deleteRole(event.getDeletedCorp());
     }
 }
