@@ -185,7 +185,7 @@ public class DiscordGroupSyncHandler {
     public void deleteRole(String name) {
         loadOrGetGuild().getRoles().collectList().subscribe(listOfRoles -> listOfRoles.forEach(role -> {
             if (role.name().equalsIgnoreCase(name)) {
-                loadOrGetGuild().deleteRole(Snowflake.of(role.id()), "DiscordGroupSyncHandler");
+                loadOrGetGuild().deleteRole(Snowflake.of(role.id()), "DiscordGroupSyncHandler").subscribe();
             }
         }));
     }
