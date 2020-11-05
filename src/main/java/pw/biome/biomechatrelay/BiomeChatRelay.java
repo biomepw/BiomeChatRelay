@@ -47,7 +47,7 @@ public final class BiomeChatRelay extends JavaPlugin {
 
     private void initialiseDiscordThread() {
         discordThread = new DiscordThread(getConfig().getString("discord-token"),
-                getConfig().getString("server-chat-channel-id"));
+                getConfig().getString("server-chat-channel-id"), getConfig().getString("admin-chat-channel-id"));
 
         discordThread.setName("BiomeChatRelay - Discord");
         discordThread.start();

@@ -17,14 +17,18 @@ public class DiscordThread extends Thread {
     private final Snowflake serverChatSnowflake;
 
     @Getter
+    private final Snowflake adminChannelSnowflake;
+
+    @Getter
     @Setter
     private boolean debugMode;
 
     @Getter
     private final DiscordGroupSyncHandler discordGroupSyncHandler;
 
-    public DiscordThread(String token, String serverChatId) {
+    public DiscordThread(String token, String serverChatId, String adminChatId) {
         this.serverChatSnowflake = Snowflake.of(serverChatId);
+        this.adminChannelSnowflake = Snowflake.of(adminChatId);
         client = DiscordClient.create(token);
         discordGroupSyncHandler = new DiscordGroupSyncHandler(client);
         discordGroupSyncHandler.loadPermissionSet();

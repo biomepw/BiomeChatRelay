@@ -12,6 +12,7 @@ import pw.biome.biomechatrelay.discord.DiscordThread;
 public final class ChatUtility {
 
     private static RestChannel serverChatChannel;
+    private static RestChannel adminChannel;
 
     public static void sendToDiscord(String message) {
         DiscordThread discordThread = BiomeChatRelay.getInstance().getDiscordThread();
@@ -22,6 +23,20 @@ public final class ChatUtility {
         }
 
         serverChatChannel.createMessage(message).subscribe();
+
+        // Log all messages to console
+        BiomeChatRelay.info(message);
+    }
+
+    public static void sendToAdminChannel(String message) {
+        DiscordThread discordThread = BiomeChatRelay.getInstance().getDiscordThread();
+
+        // Lazy load server chat channel, and then cache
+        if (adminChannel == null) {
+            adminChannel = discordThread.getClient().getChannelById(discordThread.getAdminChannelSnowflake());
+        }
+
+        adminChannel.createMessage(message).subscribe();
 
         // Log all messages to console
         BiomeChatRelay.info(message);
