@@ -1,6 +1,7 @@
 package pw.biome.biomechatrelay;
 
 import co.aikar.commands.PaperCommandManager;
+import discord4j.discordjson.json.gateway.StatusUpdate;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
 import pw.biome.biomechatrelay.discord.DiscordThread;
@@ -32,6 +33,7 @@ public final class BiomeChatRelay extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MinecraftEventListener(), instance);
 
         initialiseDiscordThread();
+        runPlayerCountTask();
     }
 
     @Override
@@ -53,5 +55,12 @@ public final class BiomeChatRelay extends JavaPlugin {
         discordThread.start();
 
         info("Running DiscordThread now!");
+    }
+
+    private void runPlayerCountTask() {
+        getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
+            String text = getServer().getOnlinePlayers().size() + "/" + getServer().getMaxPlayers() + " online!";
+            discordThread.updatePresence(StatusUpdate.builder().status(text).build());
+        }, 60 * 20, 60 * 20);
     }
 }
