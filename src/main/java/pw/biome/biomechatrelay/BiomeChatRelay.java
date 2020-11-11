@@ -61,7 +61,7 @@ public final class BiomeChatRelay extends JavaPlugin {
 
     private void runPlayerCountTask() {
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
-            String text = getServer().getOnlinePlayers().size() + "/" + getServer().getMaxPlayers() + " online!";
+            String text = "Biome: " + getServer().getOnlinePlayers().size() + "/" + getServer().getMaxPlayers() + " online!";
             discordThread.updatePresence(
                     StatusUpdate.builder()
                             .status(Status.ONLINE.getValue())
