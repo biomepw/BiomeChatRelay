@@ -1,6 +1,8 @@
 package pw.biome.biomechatrelay;
 
 import co.aikar.commands.PaperCommandManager;
+import discord4j.core.object.presence.Activity;
+import discord4j.core.object.presence.Status;
 import discord4j.discordjson.json.gateway.StatusUpdate;
 import lombok.Getter;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -60,7 +62,12 @@ public final class BiomeChatRelay extends JavaPlugin {
     private void runPlayerCountTask() {
         getServer().getScheduler().runTaskTimerAsynchronously(this, () -> {
             String text = getServer().getOnlinePlayers().size() + "/" + getServer().getMaxPlayers() + " online!";
-            discordThread.updatePresence(StatusUpdate.builder().status(text).build());
+            discordThread.updatePresence(
+                    StatusUpdate.builder()
+                            .status(Status.ONLINE.getValue())
+                            .afk(false)
+                            .game(Activity.playing(text))
+                            .build());
         }, 60 * 20, 60 * 20);
     }
 }
