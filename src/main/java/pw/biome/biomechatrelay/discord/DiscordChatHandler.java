@@ -44,7 +44,7 @@ public final class DiscordChatHandler {
                         if (member.isBot()) return;
 
                         member.getHighestRole().subscribe(role -> {
-                            if (debug) BiomeChatRelay.info("Debug: get highest role!");
+                            if (debug) BiomeChatRelay.info("Debug: get highest role! " + role.getName());
                             ChatColor chatColor = ChatUtility.getColourFromCorpName(role.getName());
                             String formattedMessage = ChatColor.GOLD + "»" + ChatColor.AQUA +
                                     " Discord: " + chatColor + displayName + ChatColor.WHITE + " » "
