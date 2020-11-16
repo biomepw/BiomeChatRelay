@@ -24,16 +24,20 @@ import java.util.concurrent.TimeUnit;
 
 public class DiscordGroupSyncHandler implements Listener {
 
+    // Hardcoded snowflakes of GUILD/ROLE
     private static final Snowflake BIOME_GUILD_ID = Snowflake.of("618600961153433611");
     private static final Snowflake BIOME_PLAYER_ROLE_ID = Snowflake.of("619028333308411925");
 
+    // Discord client
     private final DiscordClient discordClient;
+
+    // Lazy loaded
     private RestGuild guild;
     private PermissionSet playerPermissionSet;
 
+    // Caches
     private final ExpiringMap<String, MemberData> discordUsernameCache;
     private final ExpiringMap<String, RoleData> discordRoleCache;
-
 
     /**
      * Constructor
@@ -209,8 +213,6 @@ public class DiscordGroupSyncHandler implements Listener {
 
     @EventHandler
     public void onCorpDelete(CorpDeleteEvent event) {
-        Bukkit.getScheduler().runTaskAsynchronously(BiomeChatRelay.getInstance(), () -> {
-            deleteRole(event.getDeletedCorp());
-        });
+        Bukkit.getScheduler().runTaskAsynchronously(BiomeChatRelay.getInstance(), () -> deleteRole(event.getDeletedCorp()));
     }
 }

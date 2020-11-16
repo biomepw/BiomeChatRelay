@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.Setter;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 
+/**
+ * Wrapper of Thread to house the D4J framework
+ */
 public class DiscordThread extends Thread {
 
     @Getter
@@ -31,6 +34,13 @@ public class DiscordThread extends Thread {
     @Getter
     private final DiscordGroupSyncHandler discordGroupSyncHandler;
 
+    /**
+     * Constructor
+     *
+     * @param token        for discord
+     * @param serverChatId of where to send server chat
+     * @param adminChatId  of where to send admin chat
+     */
     public DiscordThread(String token, String serverChatId, String adminChatId) {
         this.serverChatSnowflake = Snowflake.of(serverChatId);
         this.adminChannelSnowflake = Snowflake.of(adminChatId);
@@ -39,6 +49,9 @@ public class DiscordThread extends Thread {
         discordGroupSyncHandler.loadPermissionSet();
     }
 
+    /**
+     * Run + register events
+     */
     @Override
     public void run() {
         client.login().subscribe(gateway -> {
@@ -49,6 +62,11 @@ public class DiscordThread extends Thread {
         });
     }
 
+    /**
+     * Update the status of the Bot
+     *
+     * @param statusUpdate to update
+     */
     public void updatePresence(StatusUpdate statusUpdate) {
         if (gatewayDiscordClient != null) {
             gatewayDiscordClient.updatePresence(statusUpdate).subscribe();
