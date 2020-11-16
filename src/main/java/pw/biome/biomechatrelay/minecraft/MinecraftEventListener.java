@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerLoadEvent;
 import pw.biome.biomechat.obj.Corp;
+import pw.biome.biomechat.obj.MetadataManager;
 import pw.biome.biomechatrelay.BiomeChatRelay;
 import pw.biome.biomechatrelay.util.ChatUtility;
 
@@ -20,14 +21,15 @@ public class MinecraftEventListener implements Listener {
     public void playerChat(AsyncPlayerChatEvent event) {
         if (event.isCancelled()) return;
         Player player = event.getPlayer();
-        String formattedMessage = player.getDisplayName() + " » " + event.getMessage();
+        String displayName = MetadataManager.getNicknameMap().getOrDefault(player.getUniqueId(), player.getName());
+        String formattedMessage = displayName + " » " + event.getMessage();
         ChatUtility.sendToDiscord(formattedMessage);
     }
 
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        String displayName = player.getDisplayName();
+        String displayName = MetadataManager.getNicknameMap().getOrDefault(player.getUniqueId(), player.getName());
         String formattedLeaveMessage = "> **» " + displayName + " has joined**";
         ChatUtility.sendToDiscord(formattedLeaveMessage);
 
@@ -40,7 +42,7 @@ public class MinecraftEventListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerQuit(PlayerQuitEvent event) {
         Player player = event.getPlayer();
-        String displayName = player.getDisplayName();
+        String displayName = MetadataManager.getNicknameMap().getOrDefault(player.getUniqueId(), player.getName());
         String formattedLeaveMessage = "> **» " + displayName + " has quit**";
         ChatUtility.sendToDiscord(formattedLeaveMessage);
     }
@@ -48,7 +50,8 @@ public class MinecraftEventListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR)
     public void playerDeath(PlayerDeathEvent event) {
         Player player = event.getEntity();
-        String deathMessage = event.getDeathMessage().replaceAll(player.getName(), player.getDisplayName());
+        String displayName = MetadataManager.getNicknameMap().getOrDefault(player.getUniqueId(), player.getName());
+        String deathMessage = event.getDeathMessage().replaceAll(player.getName(), displayName);
         String formattedDeathMessage = "> **» " + deathMessage + "**";
         ChatUtility.sendToDiscord(formattedDeathMessage);
     }
