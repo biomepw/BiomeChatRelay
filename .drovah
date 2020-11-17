@@ -1,6 +1,6 @@
 [build]
-commands = ["gradle clean build"]
+commands = ["mvn clean package"]
 
 [archive]
-files = ["build/libs/BiomeChatRelay-"]
+files = ["target/BiomeChatRelay-"]
 append_buildnumber = true
