@@ -53,6 +53,10 @@
                                     <pattern>co.aikar.locales</pattern>
                                     <shadedPattern>pw.biome.biomechatrelay.locales</shadedPattern>
                                 </relocation>
+                                <relocation>
+                                    <pattern>io.netty</pattern>
+                                    <shadedPattern>pw.biome.biomechatrelay.d4j.netty</shadedPattern>
+                                </relocation>
                             </relocations>
                         </configuration>
                     </execution>
