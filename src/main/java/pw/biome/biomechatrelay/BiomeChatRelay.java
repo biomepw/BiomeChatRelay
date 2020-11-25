@@ -43,6 +43,7 @@ public final class BiomeChatRelay extends JavaPlugin {
         String stopMessage = "> :exclamation: Server has stopped :exclamation: ";
         ChatUtility.sendToDiscord(stopMessage);
         getServer().getScheduler().cancelTasks(instance);
+        discordThread.interrupt();
     }
 
     public static void info(String msg) {
